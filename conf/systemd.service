@@ -1,10 +1,9 @@
 [Service]
-ExecStart=/usr/bin/node /var/www/thelounge/index.js
+ExecStart=/usr/local/bin/lounge --home /var/www/thelounge/.lounge start
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=thelounge
-User=thelounge
 Environment=NODE_ENV=production
 
 [Install]

@@ -24,25 +24,18 @@ sudo useradd -d $final_path thelounge\
 # Modify the random username
 user=$(dd if=/dev/urandom bs=1 count=200 2> /dev/null | tr -c -d 'A-Za-z0-9' | sed -n 's/\(.\{24\}\).*/\1/p')
 sed -i "s@USERTOCHANGE@$user@g" ../conf/user.json
-sed -i "s@PATHTOCHANGE@$path/@g" ../conf/config.js
 
 # HACK: Change the socket.io path in the sources
-sed -i "s@PATHTOCHANGE@$path@g" ../sources/client/js/lounge.js
+# sed -i "s@PATHTOCHANGE@$path@g" ../sources/client/js/lounge.js
 
 # Copy files to the right place
-git clone https://github.com/thelounge/lounge.git $final_path
+sudo /usr/bin/npm install -g thelounge
 sudo mkdir -p $final_path/.lounge/users
 sudo cp ../conf/config.js $final_path/.lounge/
 sudo cp ../conf/user.json $final_path/.lounge/users/$user.json
 
 # Set permissions
 sudo chown -hR thelounge $final_path
-
-# Install dependencies
-sudo su - thelounge -c "cd $final_path && NODE_ENV=production /usr/bin/npm install"
- 
-# Build client side assets
-sudo su - thelounge -c "cd $final_path && NODE_ENV=production /usr/bin/npm run build"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 if [[ "$path" == "" ]]; then

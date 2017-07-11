@@ -10,6 +10,8 @@ sudo rm -rf /var/www/thelounge
 sudo rm -f /etc/nginx/conf.d/$domain.d/thelounge.conf
 sudo rm -f /etc/systemd/system/thelounge.service
 
+sudo npm uninstall -g thelounge
+
 sudo userdel thelounge
 
 sudo service nginx reload
