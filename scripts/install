@@ -12,7 +12,8 @@ final_path=/var/www/thelounge
 sudo yunohost app checkurl $domain$path -a thelounge
 path=${path%/}
 
-# Install dependencies
+# Install dependencies with current node.js
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get update
 sudo apt-get install nodejs -y
 
@@ -29,16 +30,19 @@ sed -i "s@PATHTOCHANGE@$path/@g" ../conf/config.js
 sed -i "s@PATHTOCHANGE@$path@g" ../sources/client/js/lounge.js
 
 # Copy files to the right place
+git clone https://github.com/thelounge/lounge.git $final_path
 sudo mkdir -p $final_path/.lounge/users
 sudo cp ../conf/config.js $final_path/.lounge/
 sudo cp ../conf/user.json $final_path/.lounge/users/$user.json
-sudo cp -a ../sources/* $final_path/
 
 # Set permissions
 sudo chown -hR thelounge $final_path
 
 # Install dependencies
-sudo su - thelounge -c "cd $final_path && /usr/bin/npm install"
+sudo su - thelounge -c "cd $final_path && NODE_ENV=production /usr/bin/npm install"
+ 
+# Build client side assets
+sudo su - thelounge -c "cd $final_path && NODE_ENV=production /usr/bin/npm run build"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 if [[ "$path" == "" ]]; then
